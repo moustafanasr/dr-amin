@@ -1,0 +1,140 @@
+{
+  "source": "Almana Marketing Profile, pages 2 and 4",
+  "specialties": [
+    {
+      "id": "brain",
+      "num": "01",
+      "ar": "جراحات المخ والأوعية الدموية",
+      "en": "Brain & cerebrovascular surgery",
+      "intro_ar": "جراحات دقيقة للمخ والأوعية الدموية المخية، وفق تقييم متخصص لكل حالة.",
+      "intro_en": "Specialized surgical approaches for conditions involving the brain and cerebral blood vessels.",
+      "items_ar": [
+        "جراحات أورام المخ",
+        "جراحات الأوعية الدموية المخية",
+        "القسطرة المخية التشخيصية والعلاجية",
+        "جراحات قاع الجمجمة"
+      ],
+      "items_en": [
+        "Brain tumor surgery",
+        "Cerebrovascular surgery",
+        "Diagnostic & therapeutic cerebral catheterization",
+        "Skull base surgery"
+      ],
+      "focus_ar": "الميكروسكوب الجراحي وتقنيات التدخل الدقيق بحسب طبيعة الحالة",
+      "focus_en": "Microsurgical and targeted techniques, as clinically appropriate"
+    },
+    {
+      "id": "spine",
+      "num": "02",
+      "ar": "جراحات العمود الفقري",
+      "en": "Spine surgery",
+      "intro_ar": "تقييم مشكلات العمود الفقري واختيار الخيارات العلاجية أو الجراحية المناسبة.",
+      "intro_en": "Assessment of spinal conditions and consideration of suitable surgical or non-surgical options.",
+      "items_ar": [
+        "علاج الانزلاق الغضروفي",
+        "جراحات العمود الفقري بالمنظار",
+        "الجراحات محدودة التدخل للعمود الفقري",
+        "ضيق القناة الشوكية وآلام الأعصاب"
+      ],
+      "items_en": [
+        "Herniated disc treatment",
+        "Endoscopic spine surgery",
+        "Minimally invasive spine surgery",
+        "Spinal stenosis and nerve pain"
+      ],
+      "focus_ar": "المناظير والجراحات محدودة التدخل عند ملاءمتها للحالة",
+      "focus_en": "Endoscopic and minimally invasive approaches when appropriate"
+    },
+    {
+      "id": "pain",
+      "num": "03",
+      "ar": "علاج آلام الأعصاب",
+      "en": "Interventional nerve pain management",
+      "intro_ar": "إجراءات علاجية تداخلية للتعامل مع بعض أسباب آلام الأعصاب والعمود الفقري.",
+      "intro_en": "Interventional procedures for selected causes of nerve-related and spinal pain.",
+      "items_ar": [
+        "العلاج بالتردد الحراري",
+        "حقن جذور الأعصاب",
+        "فك الالتصاقات بعد جراحات العمود الفقري باستخدام القسطرة التداخلية"
+      ],
+      "items_en": [
+        "Radiofrequency ablation",
+        "Nerve root injections",
+        "Post-spine-surgery adhesiolysis using interventional catheterization"
+      ],
+      "focus_ar": "إجراءات تداخلية بعد التشخيص ومناقشة البدائل",
+      "focus_en": "Targeted interventions following assessment and discussion of options"
+    },
+    {
+      "id": "special",
+      "num": "04",
+      "ar": "جراحات المخ والأعصاب المتخصصة",
+      "en": "Specialized neurosurgery",
+      "intro_ar": "تشخيص وجراحات لحالات متخصصة بالجهاز العصبي لدى الأطفال والبالغين.",
+      "intro_en": "Specialized neurosurgical care for selected neurological conditions in children and adults.",
+      "items_ar": [
+        "علاج الاستسقاء المخي لدى الأطفال والبالغين",
+        "علاج التشوهات الخلقية بالمخ والجهاز العصبي"
+      ],
+      "items_en": [
+        "Hydrocephalus management in children and adults",
+        "Congenital malformations of the brain and nervous system"
+      ],
+      "focus_ar": "خطط علاج مبنية على التقييم الفردي للحالة",
+      "focus_en": "Individualized treatment planning based on clinical evaluation"
+    }
+  ],
+  "academic_degrees": [
+    [
+      "2022",
+      "دكتوراه جراحة المخ والأعصاب (MD/PhD)",
+      "MD/PhD in Neurosurgery",
+      "جامعة طنطا / جامعة ليموج",
+      "Tanta University / University of Limoges"
+    ],
+    [
+      "2018",
+      "دبلوم الجراحات الميكروسكوبية (DU)",
+      "DU in Microsurgery",
+      "جامعة ليموج — فرنسا",
+      "University of Limoges, France"
+    ],
+    [
+      "2020",
+      "شهادة التخصص الدقيق في جراحة المخ والأعصاب (DFMSA)",
+      "DFMSA in Neurosurgery",
+      "جامعة السوربون — فرنسا",
+      "Sorbonne University, France"
+    ],
+    [
+      "2019",
+      "دبلوم جراحات العمود الفقري محدودة التدخل (DU)",
+      "DU in Minimally Invasive Spine Surgery",
+      "جامعة بوردو — فرنسا",
+      "University of Bordeaux, France"
+    ]
+  ],
+  "clinical_fellowships": [
+    [
+      "2016–2018",
+      "زمالة إكلينيكية في الأشعة العصبية التداخلية والقسطرة المخية",
+      "Clinical fellowship — Interventional Neuroradiology",
+      "مستشفى جامعة ليموج، فرنسا",
+      "Limoges University Hospital, France"
+    ],
+    [
+      "2019",
+      "زمالة إكلينيكية في جراحات العمود الفقري محدودة التدخل",
+      "Clinical fellowship — Minimally Invasive Spine Surgery",
+      "مستشفى جامعة بوردو، فرنسا",
+      "Bordeaux University Hospital, France"
+    ],
+    [
+      "2020",
+      "زمالة إكلينيكية في أورام الجهاز العصبي وجراحات الأوعية الدموية المخية",
+      "Clinical fellowship — Neuro-oncology & Cerebrovascular Surgery",
+      "مستشفى لاربيوازيير، باريس، فرنسا",
+      "Lariboisière Hospital, Paris, France"
+    ]
+  ]
+}

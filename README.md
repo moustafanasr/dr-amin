@@ -1,83 +1,76 @@
-# Dr. Amin Elghanam — Premium Medical Portfolio (Preview)
+# Dr. Amin Elghanam — Bilingual Portfolio Preview v2.1
 
-**A real static, Arabic-first, responsive five-page website**, designed for client review on GitHub Pages, then adaptation into a custom WordPress theme.
-
-## Open / run
-
-Simplest: open `index.html` in a browser. For the most reliable preview, use a local HTTP server:
-
-```bash
-cd dr-amin-portfolio
-python -m http.server 8000
-```
-
-Open **http://localhost:8000**.
-
-The site does **not** use npm, a build step, framework runtime, API keys, or a backend. The core layout and navigation work without any animation CDN.
-
-## Publish on GitHub Pages
-
-1. Create a repository (for example `dr-amin-portfolio`) on GitHub.
-2. Upload the **contents of this directory**, keeping `index.html` in the repo root. Do not upload only the ZIP without extracting it.
-3. Navigate to **Settings → Pages → Build and deployment**.
-4. Choose **Deploy from a branch**, branch **main**, folder **/(root)**; save.
-5. The preview will typically be available at `https://YOUR-USERNAME.github.io/dr-amin-portfolio/` after deployment.
-6. Send that URL to the client.
-
-> GitHub Pages exposes content publicly in the typical setup. Do not add private files or sensitive patient data. All pages currently contain `<meta name="robots" content="noindex,nofollow">` because the site is a pre-approval preview. Before launching the official site, review and remove that tag, set the real domain, and add canonical URLs.
+A handcrafted, accessible, responsive medical portfolio built as a **static preview** for GitHub Pages and subsequent custom WordPress implementation.
 
 ## Pages
 
-- `index.html` — editorial home, photo-led animated hero, specialties, credentials, media previews, FAQs.
-- `about.html` — professional background and supplied credential highlights.
-- `specialties.html` — neurosurgery, vascular, spine, nerve and pain services.
-- `media.html` — two playable supplied YouTube links; five Facebook video links; one Instagram reference.
-- `contact.html` — honest pre-launch contact state and patient preparation guidance.
-
-## Design / engineering
-
-- Direction: Arabic RTL, editorial luxury medical brand, no clinical stock-photo clichés.
-- Palette: navy `#183755`, copper `#b9765e`, ivory `#f8f6f1`, blue `#79a8c7`.
-- Fonts: IBM Plex Sans Arabic and DM Sans via Google Fonts, with system fallbacks.
-- Animations: GSAP 3.12.5 and ScrollTrigger; graceful no-JS/CDN fallback.
-- 3D: optional Three.js 0.160.0 wireframe geometry on large screens. Skipped on reduced-motion and smaller screens.
-- Polyfill: smoothscroll-polyfill 0.4.4.
-- Accessibility: skip link, keyboard navigation, dialog close/ESC, keyboard menu, semantic landmarks, prefers-reduced-motion and image alt text.
-- SEO prelaunch: descriptions, favicon, simple Person schema; noindex enabled pending approval.
-- Performance: optimized local WebP images, lazy-loaded content images, on-demand YouTube iframe, capped WebGL pixel ratio.
-
-### Edit text and images
-
-Edit each `.html` file directly. Change colors / layout in `assets/css/styles.css`, interactions in `assets/js/site.js`, and photos in `assets/images/`. The transparent cutout is `assets/images/dr-amin-cutout.webp`, extracted from the supplied portrait with gray background.
-
-### Add more videos
-
-- For an ordinary Facebook/Instagram post, add a regular external link (like existing ones in `media.html`). Do not pretend it is embeddable if the platform disallows it.
-- For YouTube, add a `data-video="VIDEO_ID"` button and extend `allowedVideoIds` in `assets/js/site.js` with the **same** approved ID. Alternatively, link directly to the watch URL.
-- Ask the doctor/team to confirm subject, treatment claims, title, transcription, and permission before publishing captions or patient images.
-
-## Important pre-launch actions
-
-1. **Verify professional titles and credentials** with the doctor. The supplied flyer says 'consultant' while some third-party listings say 'specialist'. The prototype follows the supplied flyer, not an independent license verification.
-2. **Confirm current clinic locations, operating times, and official phone/WhatsApp.** The supplied flyer advertises specific August visit dates, not ongoing clinic hours. We intentionally have not used the flyer event hotline as the doctor's private number.
-3. Integrate real contact / booking only after receiving verified contact details. **No functional appointment backend exists in this static preview.**
-4. Review the exact video titles and medical content; labels in the demo are neutral placeholders.
-5. Get clinical/legal sign-off and a privacy policy before going live. Never publish identifiable patient cases, recordings, or medical information without the necessary rights and consent.
-6. Provide the official site domain and social profile URLs; add canonical links, Open Graph preview, analytics **with appropriate consent**, structured clinic details, and a legally appropriate privacy notice.
-
-## WordPress migration blueprint
-
-The static site is deliberately prepared for a **custom coded WordPress theme**, not a page-builder-only clone.
-
-| Static prototype | WordPress custom theme |
+| Arabic (RTL, default) | English (LTR) |
 |---|---|
-| Shared header & footer markup | `header.php`, `footer.php`, `functions.php` |
-| `index.html` | `front-page.php` |
-| `about.html` | `page-about.php` |
-| `specialties.html` | `page-specialties.php` + optional service CPT |
-| `media.html` | `page-media.php` + media CPT / custom fields |
-| `contact.html` | `page-contact.php` + verified booking integration |
-| Local CSS and JS | WP-enqueued stylesheet/scripts with versioned dependencies |
-| Hero/portrait/video text | Editable via block fields, theme options or ACF-equivalent |
+| `index.html` | `en/index.html` |
+| `about.html` | `en/about.html` |
+| `specialties.html` | `en/specialties.html` |
+| `media.html` | `en/media.html` |
+| `contact.html` | `en/contact.html` |
 
-Migration requires WordPress installation, hosting, admin access, staging domain, approved content and confirmed booking integrations. **This ZIP is a working static prototype, not an installable WordPress theme ZIP.**
+`assets/` contains local CSS, JavaScript and licensed-to-client images provided for the project.  Site layout is fully functional without GSAP, Three.js or Google Fonts (those are progressively enhanced from CDNs).
+
+## Build and preview
+
+- Open `index.html` to review Arabic, or `en/index.html` to review English.
+- For a development server: `python -m http.server 8000` then visit `http://localhost:8000/`.
+- If you edit copy in `build.py`, run `python build.py` to regenerate all ten HTML pages. Requires Python 3 only (stdlib). Direct HTML edits are possible but will be overwritten by regeneration.
+- Editable category source for both languages is exported to `content/source-categories.json` (generated from `build.py`).
+
+## Publish on GitHub Pages
+
+The repository must have `index.html` in the root, not inside a nested folder. From the extracted website root:
+
+```bash
+git init
+git add .
+git commit -m "Update Dr Amin bilingual portfolio v2"
+git branch -M main
+git remote add origin https://github.com/moustafanasr/dr-amin.git
+git push -u origin main
+```
+
+If an `origin` remote already exists, use `git remote set-url origin https://github.com/moustafanasr/dr-amin.git` instead of `git remote add`. If the remote has commits you do not have locally, fetch/reconcile history before pushing; do **not** force push an existing project.
+
+Go to **GitHub → Settings → Pages → Deploy from a branch → main / (root)**.
+
+Expected preview URL once deployed:
+
+- Arabic: `https://moustafanasr.github.io/dr-amin/`
+- English: `https://moustafanasr.github.io/dr-amin/en/`
+
+## Interactions implemented
+
+- Mobile navigation with keyboard Escape behavior.
+- Matching Arabic/English routes (no automated translations or stale language mix).
+- Accessible HTML details/summary FAQ.
+- On-site YouTube modal for two provided videos, external Facebook links for five supplied reels.
+- Email link and copy-to-clipboard on Contact (browser may prompt if clipboard permission is missing).
+- GSAP/ScrollTrigger entrance animations with reduced-motion detection and safe fallback.
+- Decorative 3D Three.js geometry, loaded only on sufficiently large screens, with safe fallback.
+- Local image assets, native lazy loading on below-the-fold imagery.
+
+## Medical content & review
+
+- Professional credentials, clinical fellowships and four practice categories are mapped from **Almana Marketing Profile, pages 1–4** and the supplied Amin Elghanam flyer.
+- No fabricated hospital location, clinic hours, booking availability, cure claims, patient outcomes or testimonial counts.
+- **Professional email in the submitted profile:** `amin.elghanam@gmail.com`. It appears for inquiries and needs client sign-off before official launch. The Saudi mobile number on the profile is deliberately *not* used as an appointment hotline because current availability is unconfirmed.
+- YouTube videos have generic labels until the doctor approves exact titles and descriptions.
+- The site currently has `noindex,nofollow` metadata **by design**, to keep this GitHub preview out of search results. Before production, remove this after content approval and configure canonical URLs, hreflang absolute links, sitemap, SEO and current contact details.
+- Do not deploy as clinical booking software or claim to collect appointment requests: the preview does not have a backend or form submission.
+
+## Conversion to WordPress
+
+Recommended mapping: front-page.php (Home), page-about.php, page-specialties.php, page-media.php, page-contact.php. Build language equivalents through WPML or Polylang; use WP fields or CPTs for specialties, media and clinic details. Replace static anchor paths with WordPress URLs; enqueue assets and scripts with versioning, use local WordPress Media Library assets. Review personal-data practices, consent, any cookie/analytics requirements and medical advertising rules before launch.
+
+## Pre-launch confirmation checklist
+
+- Doctor's final degree titles and translations; approval of academic timeline.
+- Clinic locations, addresses, appointment hours, map pins, booking contact number and WhatsApp.
+- Verify professional email should be public.
+- Approved video titles, captions, thumbnails, and privacy/public distribution consent.
+- Site domain, SEO indexation, analytics/consent requirements, policies, hosting and official WordPress setup.
