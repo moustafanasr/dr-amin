@@ -1,235 +1,144 @@
-"""Build the Dr. Amin Elghanam static portfolio.
-All content is reviewed against the client-supplied Almana Marketing Profile, November 2026.
+#!/usr/bin/env python3
+"""Dr. Amin Elghanam: static bilingual site builder, editorial redesign V3.
+Grounded copy from the client's submitted professional profile. No unsupported booking claims.
 Run: python build.py
-No third-party Python dependencies required.
 """
 from pathlib import Path
 from html import escape
-import json
-import re
+import medical_content as src
 
 ROOT=Path(__file__).resolve().parent
-CLINIC_EMAIL='amin.elghanam@gmail.com'  # professional profile; verify before publishing
-VIDS=['tbu3TAHza4w','DAtmoYU0274']
-FB=['https://www.facebook.com/share/r/U3TqcRnqjkzUNo5D/', 'https://www.facebook.com/share/r/D5bntnGavaQSFnzt/', 'https://www.facebook.com/share/r/DzFtrmLGvPaHprPj/', 'https://www.facebook.com/share/r/bWp6guie797ae8vT/', 'https://www.facebook.com/share/r/q6EQXG8sgc4Rzopn/']
-SERVICES=[
- {'id':'brain', 'num':'01','ar':'جراحات المخ والأوعية الدموية','en':'Brain & cerebrovascular surgery',
-  'intro_ar':'جراحات دقيقة للمخ والأوعية الدموية المخية، وفق تقييم متخصص لكل حالة.','intro_en':'Specialized surgical approaches for conditions involving the brain and cerebral blood vessels.',
-  'items_ar':['جراحات أورام المخ','جراحات الأوعية الدموية المخية','القسطرة المخية التشخيصية والعلاجية','جراحات قاع الجمجمة'],
-  'items_en':['Brain tumor surgery','Cerebrovascular surgery','Diagnostic & therapeutic cerebral catheterization','Skull base surgery'],
-  'focus_ar':'الميكروسكوب الجراحي وتقنيات التدخل الدقيق بحسب طبيعة الحالة','focus_en':'Microsurgical and targeted techniques, as clinically appropriate'},
- {'id':'spine', 'num':'02','ar':'جراحات العمود الفقري','en':'Spine surgery',
-  'intro_ar':'تقييم مشكلات العمود الفقري واختيار الخيارات العلاجية أو الجراحية المناسبة.','intro_en':'Assessment of spinal conditions and consideration of suitable surgical or non-surgical options.',
-  'items_ar':['علاج الانزلاق الغضروفي','جراحات العمود الفقري بالمنظار','الجراحات محدودة التدخل للعمود الفقري','ضيق القناة الشوكية وآلام الأعصاب'],
-  'items_en':['Herniated disc treatment','Endoscopic spine surgery','Minimally invasive spine surgery','Spinal stenosis and nerve pain'],
-  'focus_ar':'المناظير والجراحات محدودة التدخل عند ملاءمتها للحالة','focus_en':'Endoscopic and minimally invasive approaches when appropriate'},
- {'id':'pain','num':'03','ar':'علاج آلام الأعصاب','en':'Interventional nerve pain management',
-  'intro_ar':'إجراءات علاجية تداخلية للتعامل مع بعض أسباب آلام الأعصاب والعمود الفقري.','intro_en':'Interventional procedures for selected causes of nerve-related and spinal pain.',
-  'items_ar':['العلاج بالتردد الحراري','حقن جذور الأعصاب','فك الالتصاقات بعد جراحات العمود الفقري باستخدام القسطرة التداخلية'],
-  'items_en':['Radiofrequency ablation','Nerve root injections','Post-spine-surgery adhesiolysis using interventional catheterization'],
-  'focus_ar':'إجراءات تداخلية بعد التشخيص ومناقشة البدائل','focus_en':'Targeted interventions following assessment and discussion of options'},
- {'id':'special','num':'04','ar':'جراحات المخ والأعصاب المتخصصة','en':'Specialized neurosurgery',
-  'intro_ar':'تشخيص وجراحات لحالات متخصصة بالجهاز العصبي لدى الأطفال والبالغين.','intro_en':'Specialized neurosurgical care for selected neurological conditions in children and adults.',
-  'items_ar':['علاج الاستسقاء المخي لدى الأطفال والبالغين','علاج التشوهات الخلقية بالمخ والجهاز العصبي'],
-  'items_en':['Hydrocephalus management in children and adults','Congenital malformations of the brain and nervous system'],
-  'focus_ar':'خطط علاج مبنية على التقييم الفردي للحالة','focus_en':'Individualized treatment planning based on clinical evaluation'}
-]
-EDUCATION=[
- ('2022','دكتوراه جراحة المخ والأعصاب (MD/PhD)','MD/PhD in Neurosurgery','جامعة طنطا / جامعة ليموج','Tanta University / University of Limoges'),
- ('2018','دبلوم الجراحات الميكروسكوبية (DU)','DU in Microsurgery','جامعة ليموج — فرنسا','University of Limoges, France'),
- ('2020','شهادة التخصص الدقيق في جراحة المخ والأعصاب (DFMSA)','DFMSA in Neurosurgery','جامعة السوربون — فرنسا','Sorbonne University, France'),
- ('2019','دبلوم جراحات العمود الفقري محدودة التدخل (DU)','DU in Minimally Invasive Spine Surgery','جامعة بوردو — فرنسا','University of Bordeaux, France')
-]
-FELLOWSHIPS=[
- ('2016–2018','زمالة إكلينيكية في الأشعة العصبية التداخلية والقسطرة المخية','Clinical fellowship — Interventional Neuroradiology','مستشفى جامعة ليموج، فرنسا','Limoges University Hospital, France'),
- ('2019','زمالة إكلينيكية في جراحات العمود الفقري محدودة التدخل','Clinical fellowship — Minimally Invasive Spine Surgery','مستشفى جامعة بوردو، فرنسا','Bordeaux University Hospital, France'),
- ('2020','زمالة إكلينيكية في أورام الجهاز العصبي وجراحات الأوعية الدموية المخية','Clinical fellowship — Neuro-oncology & Cerebrovascular Surgery','مستشفى لاربيوازيير، باريس، فرنسا','Lariboisière Hospital, Paris, France')
-]
-COPY={
+SERV=src.SERVICES
+ED=src.EDUCATION
+FEL=src.FELLOWSHIPS
+COPY=src.COPY
+NAV=['index.html','about.html','specialties.html','media.html','contact.html']
+D={
 'ar':{
- 'html_dir':'rtl','name':'د. أمين الغنام','name_long':'الدكتور أمين الغنام','role':'استشاري جراحات المخ والأعصاب والعمود الفقري',
- 'nav':['الرئيسية','عن الدكتور','التخصصات','الفيديوهات','تواصل'],'lang_name':'EN','nav_aria':'القائمة الرئيسية','menu':'فتح القائمة','skip':'تجاوز إلى المحتوى','cta':'التواصل والاستفسار',
- 'home':'الرئيسية','about':'عن الدكتور','specialties':'التخصصات','media':'الفيديوهات','contact':'التواصل',
- 'home_title':'جراحة المخ والأعصاب والعمود الفقري | د. أمين الغنام','home_desc':'تعرف على الدكتور أمين الغنام، مؤهلاته وزمالاته في فرنسا، ومجالات تخصصه في جراحات المخ والأوعية الدموية والعمود الفقري وعلاج آلام الأعصاب.',
- 'hero_small':'NEUROSURGERY / SPINE / FRANCE',
- 'hero_a':'خبرة علمية دقيقة.','hero_b':'ورعاية تبدأ بالفهم.',
- 'hero_desc':'الدكتور أمين الغنام، استشاري جراحة المخ والأعصاب والعمود الفقري. تكوين علمي وتدريب سريري في مصر وفرنسا، مع اهتمام بأن يفهم المريض حالته والخيارات المتاحة له.',
- 'hero_cta1':'استكشف التخصصات','hero_cta2':'تعرف على الدكتور','hero_side':'العلم · الدقة · الوضوح','hero_meta':'تكوين علمي وتدريب تخصصي في فرنسا',
- 'label_prof':'استشاري جراحة المخ والأعصاب','label_french':'تدريب متخصص في فرنسا','label_since':'خبرة مهنية مسجلة منذ 2010',
- 'intro_kicker':'من الخبرة إلى الممارسة','intro_h':'المجال الدقيق، <em>والإنسان في المركز.</em>',
- 'intro_p':'نجمع المجالات المختلفة داخل تخصص جراحة المخ والأعصاب في تجربة واضحة وسهلة التصفح؛ ليسهل التعرف على الخيارات والإجراءات التي يناقشها الطبيب مع المريض.',
- 'areas_kicker':'مجالات التخصص','areas_h':'أربع مجالات رئيسية. <em>اهتمام بكل التفاصيل.</em>','areas_p':'التقسيم التالي مطابق لمجالات الخبرة المدرجة في الملف المهني للدكتور.','view_details':'اعرف المزيد','browse_all':'جميع التخصصات',
- 'story_kicker':'عن الدكتور','story_h':'رحلة أكاديمية ومهنية <em>بين مصر وفرنسا.</em>','story_p':'دكتوراه في جراحة المخ والأعصاب، ودبلومات وزمالات سريرية في الجراحات الميكروسكوبية، الأشعة العصبية التداخلية، وجراحات العمود الفقري محدودة التدخل.','story_link':'اقرأ السيرة المهنية','highlights':'محطات علمية','credential_note':'المؤهلات والتواريخ كما وردت في الملف المهني المقدم من الدكتور.',
- 'approach_kicker':'فلسفة الممارسة','approach_h':'الوضوح في القرار الطبي جزء من الرعاية.','approach_p':'هدف الموقع التعريف بمجالات العمل والخبرة المهنية، ومساعدة المريض على تجهيز الأسئلة المناسبة قبل الاستشارة. لا يمكن تحديد العلاج المناسب دون تقييم سريري.',
- 'steps':['فهم الأعراض والتاريخ الطبي','مراجعة الفحوصات وتحديد الاحتمالات','شرح خيارات المتابعة أو التدخل'],
- 'watch_kicker':'المكتبة المرئية','watch_h':'المعلومة الطبية، <em>بلغة قريبة.</em>','watch_p':'مقاطع ولقاءات شاركها الدكتور كمرجع بصري للموقع. عناوين الحلقات التفصيلية قابلة للاعتماد لاحقًا.','watch_button':'شاهد الفيديوهات','youtube':'فيديو من يوتيوب','facebook':'مقطع من فيسبوك','open_video':'تشغيل الفيديو','more_media':'مشاهدة مكتبة الفيديوهات',
- 'faqs_kicker':'أسئلة شائعة','faqs_h':'قبل التواصل','faqs':[
- ('هل المعلومات الموجودة بديل عن الكشف؟','لا. المعلومات للتعريف بالتخصصات فقط، ولا تغني عن الاستشارة والفحص والتقييم الطبي المباشر.'),
- ('هل كل حالات الانزلاق الغضروفي تحتاج جراحة؟','ليس بالضرورة. تحديد الخيارات يعتمد على الأعراض والفحص والتصوير الطبي ومراجعة الطبيب للحالة.'),
- ('هل متاح حجز موعد الآن من الموقع؟','معلومات العيادات ومواعيد الحجز قيد التأكيد من الفريق الطبي، وستُضاف عند اعتمادها.'),
- ('هل المحتوى متاح بالإنجليزية؟','نعم. الموقع متاح بالعربية والإنجليزية مع صفحات مستقلة لكل لغة.')],
- 'closing_kicker':'الخطوة القادمة','closing_h':'معلومة واضحة، <em>لبداية أفضل.</em>','closing_p':'يمكنك استعراض مجالات التخصص والسيرة المهنية، أو إرسال استفسار مهني عبر البريد الإلكتروني المدون في الملف التعريفي.','closing_btn':'صفحة التواصل',
- 'footer_note':'موقع تعريفي بالمؤهلات والخبرات والتخصصات. المحتوى لا يشكل نصيحة طبية شخصية أو خدمة طوارئ.',
- 'footer_links':'روابط سريعة','footer_areas':'مجالات العمل','footer_legal':'محتوى توعوي فقط · لا يستخدم للطوارئ','back_top':'العودة لأعلى','footer_copy':'جميع الحقوق محفوظة',
- 'about_eyebrow':'THE PROFILE','about_title':'الخبرة الحقيقية <em>خلف كل قرار.</em>','about_lede':'تعرف على التكوين الأكاديمي للدكتور أمين الغنام، والتدريب السريري في عدد من المستشفيات الجامعية في فرنسا.',
- 'bio_kicker':'السيرة المهنية','bio_h':'د. أمين الغنام','bio_p1':'استشاري جراحات المخ والأعصاب والعمود الفقري. يضم مساره الأكاديمي دكتوراه في جراحة المخ والأعصاب ودبلومات تخصصية، إضافة إلى زمالات إكلينيكية في فرنسا.',
- 'bio_p2':'تشمل مجالات الخبرة الجراحات الميكروسكوبية لأورام المخ والعمود الفقري، جراحات الأوعية الدموية المخية والقسطرة، وجراحات العمود الفقري بالمنظار والتدخل المحدود، وتقييم آلام الأعصاب.',
- 'career_kicker':'المؤهلات الأكاديمية','career_h':'التعليم والشهادات','fellow_kicker':'التدريب السريري','fellow_h':'الزمالات الإكلينيكية','career_note':'المؤهلات والسنوات من نموذج Almana Marketing Profile المقدم للمشروع. مراجعة الصياغة النهائية مع الطبيب مطلوبة قبل الإطلاق الرسمي.',
- 'values_kicker':'ماذا يقدم الموقع؟','values_h':'معلومات منظمة. <em>بدون مبالغة.</em>','values':['خبرة ومؤهلات موثقة بالمستندات المقدمة','تخصصات مفصلة بلغة مفهومة','محتوى مرئي موصول بمصادره الأصلية'],
- 'spec_eyebrow':'SPECIALTIES','spec_title':'التخصصات الطبية <em>بوضوح وتفصيل.</em>','spec_lede':'أربع مجموعات تخصصية كما وردت في الملف المهني. يمكن اختيار القسم للاطلاع على الإجراءات والحالات المذكورة.',
- 'spec_jump':'انتقل إلى تخصص','spec_under':'مجالات الخبرة والإجراءات','spec_focus':'التقنيات والنهج','spec_note':'يُحدَّد مدى ملاءمة كل إجراء بعد التقييم الطبي. عرض التخصص لا يعني أنه مناسب لكل مريض.','spec_cta':'هل ترغب في معرفة المزيد؟','spec_cta_p':'استعرض السيرة المهنية ومعلومات التواصل المتاحة.',
- 'media_eyebrow':'MEDIA LIBRARY','media_title':'لقاءات ومعلومات <em>من المصدر.</em>','media_lede':'مجموعة من الروابط المرئية التي تمت مشاركتها لتكون ضمن موقع الدكتور. يتم إضافة العناوين والوصف المعتمد لكل فيديو لاحقًا.',
- 'youtube_cat':'من يوتيوب','facebook_cat':'مقاطع فيسبوك','media_note':'قد تتطلب روابط فيسبوك تسجيل الدخول. يتم فتحها على المنصة الأصلية، ويُشغَّل يوتيوب داخل نافذة الفيديو.','external':'افتح المقطع','watch':'شاهد الآن',
- 'contact_eyebrow':'CONTACT','contact_title':'التواصل مع <em>الفريق الطبي.</em>','contact_lede':'لم يتم اعتماد عناوين العيادات أو جداول المواعيد الجديدة بعد. سنعرضها فور وصول النسخة النهائية من الدكتور.',
- 'contact_card1':'استفسارات مهنية','contact_card1_p':'البريد الإلكتروني الوارد في الملف المهني. يُرجى تأكيده قبل النشر النهائي.',
- 'email':'البريد الإلكتروني','copy_email':'نسخ البريد','copied':'تم نسخ البريد','contact_card2':'العيادات والمواعيد','contact_card2_p':'بانتظار تأكيد المواقع ومواعيد العيادات من الدكتور. لن يتم نشر عناوين أو ساعات عمل غير معتمدة.',
- 'pending':'قيد التأكيد','contact_card3':'معلومات الحجز','contact_card3_p':'سيتم تفعيل رقم الحجز أو واتساب بعد اعتماد بيانات التواصل النهائية من الفريق.','contact_cta':'إرسال بريد إلكتروني','contact_note':'تنبيه: الموقع تعريفي ولا يستقبل حالات الطوارئ أو يقدم تشخيصًا عن بعد. في حالة طارئة تواصل مع الطوارئ المحلية فورًا.',
- 'preview':'نسخة معاينة — بيانات المواعيد لم تعتمد بعد','lightbox':'مشغل فيديو','close':'إغلاق'
+ 'navigation':'تصفح الموقع','home_label':'الرئيسية','about_label':'عن الدكتور','specialties_label':'التخصصات','media_label':'الفيديوهات','contact_label':'التواصل','view':'اكتشف المزيد','consultation':'الاستفسارات والمواعيد','language':'English','menu':'فتح القائمة','close_menu':'إغلاق القائمة',
+ 'hero_lead':'رعاية تبدأ بالثقة','hero_title':'دقة في العلم.<br><em>إنسانية في الرعاية.</em>','hero_body':'الدكتور أمين الغنام، استشاري جراحات المخ والأعصاب والعمود الفقري. خبرة أكاديمية وتدريب سريري في مصر وفرنسا، مع اهتمام بشرح خيارات العلاج بوضوح.','hero_cta':'تعرّف على التخصصات','hero_cta2':'عن الدكتور','hero_caption':'DR. AMIN ELGHANAM / NEUROSURGERY','hero_side':'NEUROSURGERY<br>SPINE SURGERY<br>INTERVENTIONAL CARE',
+ 'strip1':'جراحات المخ والأعصاب','strip2':'العمود الفقري والتدخل المحدود','strip3':'زمالات وتدريب في فرنسا',
+ 'intro_label':'مجالات الخبرة','intro_title':'خبرة متخصصة،<br><em>لكل حالة تفاصيلها.</em>','intro_body':'أربع مجموعات رئيسية من التخصصات توضح الحالات والإجراءات المذكورة في الملف المهني للدكتور.','area_bottom':'الاطلاع على التخصص',
+ 'bio_label':'تعرّف على الطبيب','bio_title':'مسار علمي يجمع<br><em>مصر وفرنسا.</em>','bio_body':'تشمل السيرة المهنية دكتوراه جراحة المخ والأعصاب، ودبلومات وزمالات إكلينيكية في مجالات جراحات المخ والأوعية الدموية والعمود الفقري والتقنيات محدودة التدخل.','bio_link':'اقرأ السيرة المهنية',
+ 'years_label':'مراحل من التدريب المتخصص','qualifications':'المؤهلات والزمالات','approach_label':'فلسفة الرعاية','approach_title':'قبل أي إجراء،<br><em>يأتي الفهم.</em>','approach_body':'المحتوى يساعد المريض على فهم طبيعة التخصصات والتحضير للاستشارة، ولا يحل محل التقييم السريري أو يقدم توصية علاجية فردية.','approach1':'الاستماع للتاريخ المرضي','approach2':'فهم الفحوصات وخيارات العلاج','approach3':'توضيح الخطوات المناسبة لكل حالة',
+ 'video_label':'مكتبة الفيديو','video_title':'المعرفة الطبية،<br><em>بلغة أقرب.</em>','video_body':'محتوى مصوّر ولقاءات شاركها الدكتور. تظهر الروابط الأصلية دون تغيير أو إضافة عناوين طبية غير مؤكدة.','view_media':'استعرض كل الفيديوهات',
+ 'cta_label':'تواصل معنا','cta_title':'ابدأ بسؤال.<br><em>وخُذ الخطوة التالية بوضوح.</em>','cta_body':'بيانات العيادات والمواعيد قيد التأكيد. يمكن الاطلاع على وسائل التواصل المتاحة حاليًا في صفحة التواصل.','cta_button':'التواصل والاستفسار',
+ 'interior_about_label':'السيرة المهنية','interior_about_title':'خبرة تتشكّل<br><em>بالعلم والممارسة.</em>','interior_about_body':'تعرف على المؤهلات الأكاديمية والزمالات الإكلينيكية والتدريب المتخصص للدكتور أمين الغنام.','about_story_label':'من هو د. أمين الغنام؟','about_story_title':'الدكتور أمين الغنام','about_story_body':'استشاري جراحات المخ والأعصاب والعمود الفقري. يشمل المسار الأكاديمي دكتوراه في جراحة المخ والأعصاب وتدريبًا تخصصيًا في مستشفيات جامعية بفرنسا، مع خبرة في جراحات المخ والأوعية الدموية والعمود الفقري.','about_story_detail':'وتشمل المجالات المذكورة في الملف المهني الجراحات الميكروسكوبية، جراحات العمود الفقري محدودة التدخل، القسطرة المخية، وإجراءات علاج بعض أنواع آلام الأعصاب.','education':'التعليم والشهادات','clinical':'الزمالات والتدريب السريري','study_note':'المؤهلات والسنوات من الملف المهني المقدم، وتحتاج اعتماد الصياغة النهائية قبل النشر العام.',
+ 'interior_spec_label':'التخصصات','interior_spec_title':'تخصصات دقيقة.<br><em>شرح واضح.</em>','interior_spec_body':'استكشف مجالات الخبرة والأمثلة على الحالات والإجراءات كما وردت في الملف المهني.','jump':'انتقل إلى التخصص','conditions':'الحالات والإجراءات','focus':'النهج والتقنيات','spec_notice':'تحديد ملاءمة العلاج يعتمد على تشخيص الحالة ومراجعة الطبيب، ولا تُعد المعلومات توصية علاجية فردية.',
+ 'interior_media_label':'فيديوهات ولقاءات','interior_media_title':'معرفة تُشاهَد.<br><em>وتُفهَم.</em>','interior_media_body':'مقاطع الفيديو المرسلة من الدكتور، مع روابط منصاتها الأصلية. يمكن إضافة وصف كل فيديو بعد اعتماد المحتوى.','watch':'شاهد على يوتيوب','facebook':'افتح على فيسبوك','video_sub':'قائمة الفيديوهات','social_sub':'مقاطع قصيرة','media_note':'قد تتطلب روابط فيسبوك تسجيل الدخول، وهي تفتح على المنصة الأصلية.',
+ 'interior_contact_label':'تواصل','interior_contact_title':'الخطوة التالية<br><em>تبدأ من هنا.</em>','interior_contact_body':'معلومات التواصل المهنية المتاحة حاليًا، مع مساحة جاهزة لإضافة العيادات ومواعيدها بمجرد اعتمادها.','email_label':'البريد الإلكتروني','email_body':'البريد المدون في الملف المهني للدكتور. يُراجع قبل الإطلاق العام.','send_email':'إرسال بريد إلكتروني','location_label':'العيادات والمواقع','location_body':'بانتظار تأكيد العناوين ومواعيد العيادات الجديدة من الفريق الطبي.','booking_label':'الحجز والاستفسارات','booking_body':'سيُضاف رقم الحجز أو واتساب عند اعتماد وسيلة التواصل الرسمية.','pending':'بانتظار الاعتماد','emergency':'تنبيه: الموقع تعريفي ولا يوفر تشخيصًا عن بعد أو خدمة طوارئ. في الحالات الطارئة تواصل مع خدمات الطوارئ المحلية.','footer_desc':'الملف المهني والتخصصات والمحتوى المرئي للدكتور أمين الغنام. المعلومات توعوية ولا تغني عن الاستشارة الطبية.','footer_end':'جميع الحقوق محفوظة','privacy':'لا تُدخل بيانات صحية شخصية في البريد الإلكتروني العام.',
+ 'medical_note':'معلومات عامة وليست تشخيصًا طبيًا','powered':'تصميم وتجربة رقمية للدكتور أمين الغنام','videos':'فيديو من يوتيوب','social':'مقطع على فيسبوك','read_more':'اكتشف التفاصيل','return_up':'للأعلى'
 },
 'en':{
- 'html_dir':'ltr','name':'Dr. Amin Elghanam','name_long':'Dr. Amin Elghanam','role':'Consultant Neurosurgeon & Spine Surgeon',
- 'nav':['Home','About','Specialties','Media','Contact'],'lang_name':'عربي','nav_aria':'Main navigation','menu':'Open menu','skip':'Skip to content','cta':'Get in touch',
- 'home':'Home','about':'About','specialties':'Specialties','media':'Media','contact':'Contact',
- 'home_title':'Consultant Neurosurgeon & Spine Surgeon | Dr. Amin Elghanam','home_desc':'Discover Dr. Amin Elghanam’s neurosurgery and spine surgery expertise, French clinical fellowships, qualifications and professional media.',
- 'hero_small':'NEUROSURGERY / SPINE / FRANCE',
- 'hero_a':'Precision informed by science.','hero_b':'Care guided by understanding.',
- 'hero_desc':'Dr. Amin Elghanam, Consultant Neurosurgeon and Spine Surgeon. An academic and clinical background across Egypt and France, with a focus on helping patients understand their conditions and potential options.',
- 'hero_cta1':'Explore specialties','hero_cta2':'Meet Dr. Amin','hero_side':'Knowledge · Precision · Clarity','hero_meta':'Academic qualifications and clinical training in France',
- 'label_prof':'Consultant in Neurosurgery','label_french':'Specialized clinical training in France','label_since':'Professional experience listed since 2010',
- 'intro_kicker':'From expertise to practice','intro_h':'Specialist knowledge. <em>Patient-centered thinking.</em>',
- 'intro_p':'Explore the distinct areas within neurosurgery through a clear, accessible experience that supports better questions and more informed discussions.',
- 'areas_kicker':'Areas of practice','areas_h':'Four focused areas. <em>One thoughtful approach.</em>','areas_p':'The four areas below reflect the professional expertise listed in Dr. Amin’s submitted profile.','view_details':'Explore area','browse_all':'All specialties',
- 'story_kicker':'About Dr. Amin','story_h':'An academic and clinical path <em>across Egypt and France.</em>','story_p':'A doctorate in neurosurgery, specialist diplomas and clinical fellowships in microsurgery, interventional neuroradiology and minimally invasive spine surgery.','story_link':'Read the full profile','highlights':'Academic milestones','credential_note':'Qualifications and dates taken from the doctor’s submitted professional profile.',
- 'approach_kicker':'Our approach','approach_h':'Clear clinical decisions begin with clear conversations.','approach_p':'This website introduces professional credentials and practice areas. It helps patients prepare informed questions but cannot determine treatment without clinical examination.',
- 'steps':['Understand symptoms and history','Review investigations and clinical findings','Discuss observation or intervention options'],
- 'watch_kicker':'Media library','watch_h':'Medical knowledge, <em>made approachable.</em>','watch_p':'Videos provided as references for this website. Specific episode titles and descriptions can be added after client approval.','watch_button':'View media','youtube':'YouTube video','facebook':'Facebook clip','open_video':'Play video','more_media':'Explore the media library',
- 'faqs_kicker':'Common questions','faqs_h':'Before you get in touch','faqs':[
- ('Can the website replace a consultation?','No. The material is for general information only and does not replace a consultation, examination or individualized medical assessment.'),
- ('Does every herniated disc require surgery?','Not necessarily. Options depend on symptoms, examination, imaging and a doctor’s assessment.'),
- ('Can I book an appointment online?','New clinic locations, schedules and booking details are pending confirmation and will be added once approved.'),
- ('Is the site available in Arabic?','Yes. The website has dedicated Arabic and English pages.')],
- 'closing_kicker':'Your next step','closing_h':'Clear information. <em>A more confident conversation.</em>','closing_p':'Review the practice areas, learn more about the doctor, or contact the professional email included in his profile.','closing_btn':'Contact page',
- 'footer_note':'A professional portfolio for qualifications, training and specialties. Content does not constitute individual medical advice or emergency care.',
- 'footer_links':'Quick links','footer_areas':'Areas of practice','footer_legal':'For information only · Not for emergencies','back_top':'Back to top','footer_copy':'All rights reserved',
- 'about_eyebrow':'THE PROFILE','about_title':'The experience <em>behind the decisions.</em>','about_lede':'Explore Dr. Amin Elghanam’s academic credentials and clinical training at university hospitals across France.',
- 'bio_kicker':'Professional profile','bio_h':'Dr. Amin Elghanam','bio_p1':'A consultant neurosurgeon and spine surgeon with an MD/PhD in Neurosurgery, advanced academic diplomas and specialist clinical fellowships in France.',
- 'bio_p2':'Areas of expertise span microsurgery for brain and spinal tumors, cerebrovascular surgery and neuro-interventional procedures, endoscopic and minimally invasive spine techniques, and nerve pain assessment.',
- 'career_kicker':'Academic credentials','career_h':'Degrees & diplomas','fellow_kicker':'Clinical training','fellow_h':'Clinical fellowships','career_note':'Qualifications and years come from the submitted Almana Marketing Profile. Final wording should be verified by the doctor before public launch.',
- 'values_kicker':'What this site offers','values_h':'Clarity in every detail. <em>No invented claims.</em>','values':['Qualifications grounded in submitted documentation','Detailed practice areas in accessible language','Videos linked to their original platforms'],
- 'spec_eyebrow':'SPECIALTIES','spec_title':'Specialties, <em>clearly explained.</em>','spec_lede':'Four main areas as listed in the submitted professional profile. Browse each to see the conditions and procedures mentioned there.',
- 'spec_jump':'Jump to an area','spec_under':'Conditions & procedures','spec_focus':'Techniques & approach','spec_note':'Suitability for a procedure can only be assessed after an individual clinical evaluation. Listing a specialty does not mean it is appropriate for every patient.','spec_cta':'Have more questions?','spec_cta_p':'Explore the professional profile and current contact information.',
- 'media_eyebrow':'MEDIA LIBRARY','media_title':'Videos and insights, <em>from the source.</em>','media_lede':'A curated selection of video links supplied for Dr. Amin’s website. Approved titles and video summaries can be added later.',
- 'youtube_cat':'From YouTube','facebook_cat':'Facebook clips','media_note':'Facebook links may require login; they open on the original platform. YouTube videos play in an embedded dialog.','external':'Open clip','watch':'Watch video',
- 'contact_eyebrow':'CONTACT','contact_title':'Contact the <em>medical team.</em>','contact_lede':'The current clinic addresses and schedules have not yet been confirmed. They will appear here as soon as the doctor approves them.',
- 'contact_card1':'Professional inquiries','contact_card1_p':'The email address in the submitted professional profile. Please confirm it before the public launch.',
- 'email':'Email address','copy_email':'Copy email','copied':'Email copied','contact_card2':'Clinics & schedules','contact_card2_p':'Clinic locations and hours are awaiting confirmation. No unverified addresses or opening times will be published.',
- 'pending':'Pending confirmation','contact_card3':'Appointment booking','contact_card3_p':'Booking phone or WhatsApp details can be activated once the medical team approves the final contact information.','contact_cta':'Email the doctor','contact_note':'Notice: This is an informational website. It does not provide remote diagnosis or emergency care. In an emergency, contact your local emergency services immediately.',
- 'preview':'Preview version — clinic schedule not yet approved','lightbox':'Video player','close':'Close'
+ 'navigation':'Explore the site','home_label':'Home','about_label':'About','specialties_label':'Specialties','media_label':'Videos','contact_label':'Contact','view':'Discover more','consultation':'Contact & inquiries','language':'العربية','menu':'Open menu','close_menu':'Close menu',
+ 'hero_lead':'Care begins with trust','hero_title':'Precision in science.<br><em>Humanity in care.</em>','hero_body':'Dr. Amin Elghanam is a Consultant Neurosurgeon and Spine Surgeon with academic qualifications and clinical training in Egypt and France, and a focus on clearly explaining care options.','hero_cta':'Explore specialties','hero_cta2':'Meet Dr. Amin','hero_caption':'DR. AMIN ELGHANAM / NEUROSURGERY','hero_side':'NEUROSURGERY<br>SPINE SURGERY<br>INTERVENTIONAL CARE',
+ 'strip1':'Brain & neurosurgery','strip2':'Spine & minimally invasive care','strip3':'Clinical fellowships in France',
+ 'intro_label':'Areas of expertise','intro_title':'Focused expertise.<br><em>Individual care.</em>','intro_body':'Four areas of practice, based on the procedures and conditions listed in Dr. Amin’s professional profile.','area_bottom':'Explore this specialty',
+ 'bio_label':'Meet your specialist','bio_title':'An academic journey<br><em>from Egypt to France.</em>','bio_body':'His professional profile includes a doctoral qualification in neurosurgery, specialized diplomas, and clinical fellowships in neurosurgery, cerebrovascular care, and minimally invasive spine procedures.','bio_link':'Discover the full profile',
+ 'years_label':'Milestones of advanced training','qualifications':'Qualifications & fellowships','approach_label':'Approach to care','approach_title':'Understanding comes<br><em>before intervention.</em>','approach_body':'This website provides general information about areas of practice and helps visitors prepare for consultations. It does not replace an individual clinical assessment.','approach1':'Understand the patient history','approach2':'Review investigations and options','approach3':'Explain the next steps clearly',
+ 'video_label':'Video library','video_title':'Medical knowledge,<br><em>made approachable.</em>','video_body':'Videos and interviews shared as source references for the website. Original links are preserved; specific medical titles await approval.','view_media':'Explore all videos',
+ 'cta_label':'Get in touch','cta_title':'A question is<br><em>a good place to begin.</em>','cta_body':'Current clinic locations and appointment schedules are being confirmed. Visit the contact page for available professional contact details.','cta_button':'Contact and inquiries',
+ 'interior_about_label':'Professional profile','interior_about_title':'A career shaped<br><em>by science and practice.</em>','interior_about_body':'Explore Dr. Amin Elghanam’s qualifications, clinical fellowships and specialist hospital training.','about_story_label':'Meet Dr. Amin Elghanam','about_story_title':'Dr. Amin Elghanam','about_story_body':'A Consultant Neurosurgeon and Spine Surgeon whose professional record includes a doctorate in neurosurgery and specialist training at university hospitals in France.','about_story_detail':'His listed areas of practice include microsurgery, minimally invasive spine surgery, cerebrovascular surgery and interventional approaches to selected types of nerve pain.','education':'Education and qualifications','clinical':'Clinical fellowships','study_note':'Dates and qualifications are taken from the submitted professional profile. Final terminology should be approved before public launch.',
+ 'interior_spec_label':'Specialties','interior_spec_title':'Specialized care.<br><em>Clearly explained.</em>','interior_spec_body':'Explore Dr. Amin’s recorded areas of expertise and examples of procedures and conditions, organized for easy reading.','jump':'Jump to specialty','conditions':'Conditions and procedures','focus':'Techniques and approach','spec_notice':'Treatment suitability depends on an individual clinical evaluation. This content is general information, not personal medical advice.',
+ 'interior_media_label':'Videos & insights','interior_media_title':'Knowledge to see.<br><em>And understand.</em>','interior_media_body':'The supplied videos link back to their original channels. Approved video descriptions may be added later.','watch':'Watch on YouTube','facebook':'Open on Facebook','video_sub':'Video collection','social_sub':'Short-form clips','media_note':'Facebook clips may require login and open on their original platform.',
+ 'interior_contact_label':'Contact','interior_contact_title':'The next step<br><em>starts here.</em>','interior_contact_body':'Available professional contact details, with clearly reserved space for confirmed clinic addresses, schedules and booking information.','email_label':'Email address','email_body':'This address is listed in the submitted professional profile and should be verified before public launch.','send_email':'Send an email','location_label':'Clinics & locations','location_body':'Updated clinic addresses and visiting schedules are awaiting confirmation from the medical team.','booking_label':'Appointments & inquiries','booking_body':'The official booking phone number or WhatsApp contact will be activated once confirmed.','pending':'Awaiting confirmation','emergency':'Notice: This informational website does not provide remote diagnosis or emergency services. For emergencies, contact local emergency services.','footer_desc':'The professional profile, specialties and video resources of Dr. Amin Elghanam. This site is educational and not a substitute for medical consultation.','footer_end':'All rights reserved','privacy':'Avoid sending private medical details to a general email address.',
+ 'medical_note':'Information only — not medical advice','powered':'Digital experience for Dr. Amin Elghanam','videos':'YouTube video','social':'Facebook clip','read_more':'Explore details','return_up':'Back to top'
 }}
+YOUTUBE=[('tbu3TAHza4w','01'),('DAtmoYU0274','02')]
+FACEBOOK=['https://www.facebook.com/share/r/U3TqcRnqjkzUNo5D/','https://www.facebook.com/share/r/D5bntnGavaQSFnzt/','https://www.facebook.com/share/r/DzFtrmLGvPaHprPj/','https://www.facebook.com/share/r/bWp6guie797ae8vT/','https://www.facebook.com/share/r/q6EQXG8sgc4Rzopn/']
 
-NAVFILES=['index.html','about.html','specialties.html','media.html','contact.html']
-NAVKEYS=['home','about','specialties','media','contact']
+def esc(t):return escape(str(t),quote=True)
+def root(l):return '' if l=='ar' else '../'
+def link(l,p):return p
+def langlink(l,p):return ('en/' if l=='ar' else '../')+p
+def image(l,n):return root(l)+'assets/images/'+n
+ICON_ARROW='<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+ICON_MENU='<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>'
+ICON_PLAY='<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="m9 5 10 7-10 7z" fill="currentColor"/></svg>'
 
-ARROW='<svg class="arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-PLAY='<svg width="23" height="23" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z"/></svg>'
-MENU='<svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>'
-BRAND='<svg class="brand-mark" width="43" height="43" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M8 36 22 7l14 29M13 27h18" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M22 7v30" stroke="currentColor" stroke-width=".8" opacity=".48"/><circle cx="22" cy="7" r="2" fill="currentColor"/></svg>'
+def section_tag(text):return f'<span class="eyebrow"><span class="eyebrow-rule"></span>{text}</span>'
+def btn(txt,href,typ='primary'):
+ return f'<a class="btn btn--{typ}" href="{esc(href)}"><span>{txt}</span>{ICON_ARROW}</a>'
 
-def tr(locale,key):return COPY[locale][key]
-def text(s):return escape(str(s))
-def navlink(locale,file):return file if locale=='ar' else '../'+file
+def header(l,p):
+ d=D[l]
+ navs=''.join(f'<a href="{f}"'+(' class="active" aria-current="page"' if p==f else '')+f'>{d[k+"_label"]}</a>' for f,k in zip(NAV,['home','about','specialties','media','contact']))
+ return f'''<a href="#main" class="skip-link">Skip to content</a><div class="notice-bar"><div class="container"><span>AMIN ELGHANAM · NEUROSURGERY & SPINE</span><span class="notice-second">FRANCE / EGYPT</span></div></div>
+ <header class="site-header" id="site-header"><div class="container header-inner"><a class="identity" href="index.html" aria-label="Dr Amin Elghanam"><span class="identity-mark">A<span>·</span>E</span><span class="identity-name">DR. AMIN ELGHANAM<small>{'استشاري جراحات المخ والأعصاب والعمود الفقري' if l=='ar' else 'CONSULTANT NEUROSURGEON & SPINE SURGEON'}</small></span></a>
+ <nav class="nav-links" id="primary-nav" aria-label="{d['navigation']}">{navs}<a href="contact.html" class="nav-cta">{d['consultation']} {ICON_ARROW}</a></nav>
+ <div class="header-tools"><a class="lang-switch" href="{langlink(l,p)}" hreflang="{'en' if l=='ar' else 'ar'}">{d['language']}</a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="{d['menu']}">{ICON_MENU}</button></div></div></header>'''
 
-def local_link(locale,other,page):
- return (('en/' if locale=='ar' else '../')+page) if other!=locale else navlink(locale,page)
+def footer(l):
+ d=D[l]
+ navs=''.join(f'<a href="{f}">{d[k+"_label"]}</a>' for f,k in zip(NAV,['home','about','specialties','media','contact']))
+ return f'''<footer class="footer"><div class="container"><div class="footer-top"><div class="footer-intro"><div class="footer-wordmark">DR. AMIN <span>ELGHANAM.</span></div><p>{d['footer_desc']}</p></div><div class="footer-links"><span>EXPLORE</span>{navs}</div><div class="footer-links"><span>EXPERTISE</span>{''.join(f'<a href="specialties.html#{s["id"]}">{esc(s[l])}</a>' for s in SERV)}</div></div><div class="footer-bottom"><span>© <span id="copyright-year">2026</span> DR. AMIN ELGHANAM. {d['footer_end']}.</span><span>{d['medical_note']}</span></div></div></footer><a class="to-top" href="#main" aria-label="{d['return_up']}">↑</a>'''
 
-def button(label,href,variant='solid',extra=''):
- return f'<a class="btn btn-{variant} {extra}" href="{text(href)}"><span>{label}</span>{ARROW}</a>'
+def document(l,p,title,desc,content):
+ d=D[l];pref=root(l)
+ other='en' if l=='ar' else 'ar'
+ # Do not include devtools/extension-generated elements in source.
+ return f'''<!DOCTYPE html><html lang="{l}" dir="{'rtl' if l=='ar' else 'ltr'}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10283A"><title>{esc(title)} | Dr. Amin Elghanam</title><meta name="description" content="{esc(desc)}"><meta name="robots" content="noindex,nofollow"><meta property="og:type" content="website"><meta property="og:title" content="{esc(title)} | Dr. Amin Elghanam"><meta property="og:description" content="{esc(desc)}"><link rel="alternate" hreflang="{other}" href="{langlink(l,p)}"><link rel="icon" href="{pref}assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet"><link rel="stylesheet" href="{pref}assets/css/styles.css"></head><body>{header(l,p)}<main id="main">{content}</main>{footer(l)}<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script><script defer src="{pref}assets/js/site.js"></script></body></html>'''
 
-def eyebrow(label):return f'<span class="eyebrow"><span class="eyebrow-line"></span>{label}</span>'
+def closing(l):
+ d=D[l]
+ return f'''<section class="end-cta"><div class="container end-cta-inner"><div>{section_tag(d['cta_label'])}<h2>{d['cta_title']}</h2><p>{d['cta_body']}</p></div>{btn(d['cta_button'],'contact.html','light')}</div></section>'''
 
-def header(locale,page):
- c=COPY[locale];pairs=zip(NAVFILES,c['nav']);links=''.join(f'<a href="{navlink(locale,f)}" '+('aria-current="page" class="is-active"' if f==page else '')+f'>{text(n)}</a>' for f,n in pairs)
- other='en' if locale=='ar' else 'ar';op=local_link(locale,other,page)
- logo_href=navlink(locale,'index.html')
- return f'''<a class="skip" href="#main">{c['skip']}</a><div class="topline"><div class="wrap topline-inner"><span>{c['hero_small']}</span><span>{c['preview']}</span></div></div>
-<header class="site-header" id="site-header"><div class="wrap nav-wrap"><a class="brand" href="{logo_href}" aria-label="{text(c['name_long'])}">{BRAND}<span class="brand-words"><strong>AMIN ELGHANAM</strong><small>{'NEUROSURGERY & SPINE' if locale=='en' else 'جراحة المخ والأعصاب والعمود الفقري'}</small></span></a>
-<nav class="nav" id="main-nav" aria-label="{c['nav_aria']}">{links}<a class="nav-contact" href="{navlink(locale,'contact.html')}">{c['cta']}</a></nav><div class="nav-tools"><a class="language" href="{op}" lang="{other}" hreflang="{other}" aria-label="{'English version' if other=='en' else 'النسخة العربية'}">{c['lang_name']} <span class="language-symbol">⇄</span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="{c['menu']}">{MENU}</button></div></div></header>'''
+def home(l):
+ d=D[l]
+ cards=''.join(f'''<a class="specialty-card specialty-card--{i+1}" href="specialties.html#{s['id']}" data-reveal><div class="card-top"><span>0{i+1} / 04</span><span class="card-arrow">{ICON_ARROW}</span></div><div class="specialty-icon">{'✦' if i==0 else '◌' if i==1 else '⊕' if i==2 else '⌁'}</div><div><h3>{esc(s[l])}</h3><p>{esc(s['intro_'+l])}</p><span class="card-read">{d['area_bottom']} {ICON_ARROW}</span></div></a>''' for i,s in enumerate(SERV))
+ edu=''.join(f'<div class="small-credential"><strong>{year}</strong><span>{esc(title_ar if l=="ar" else title_en)}</span></div>' for year,title_ar,title_en,_,__ in [ED[0], ED[2], ED[3]])
+ first_id=YOUTUBE[0][0]
+ return f'''<section class="home-hero"><div class="container home-hero-grid"><div class="hero-copy"><div class="hero-kicker">{section_tag(d['hero_lead'])}<span class="hero-index">01 — 05</span></div><h1>{d['hero_title']}</h1><p>{d['hero_body']}</p><div class="hero-buttons">{btn(d['hero_cta'],'specialties.html')}{btn(d['hero_cta2'],'about.html','ghost')}</div><div class="hero-foot"><span class="pulse-dot"></span>{d['medical_note']}</div></div><div class="hero-photo"><div class="hero-photo-backdrop"></div><div class="hero-halo hero-halo--1"></div><div class="hero-halo hero-halo--2"></div><img src="{image(l,'dr-amin-cutout.webp')}" width="956" height="1280" fetchpriority="high" alt="Dr. Amin Elghanam" class="doctor-cutout"><div class="photo-label"><span>DR.</span><strong>AMIN<br>ELGHANAM</strong><small>CONSULTANT NEUROSURGEON</small></div><div class="medal"><span>FR</span><small>CLINICAL<br>TRAINING</small></div></div><div class="hero-aside">{d['hero_side']}</div></div><div class="hero-bottomline"><div class="container"><span>PERSONAL PORTFOLIO / MEDICAL PROFILE</span><span>SCROLL TO DISCOVER <span aria-hidden="true">↓</span></span></div></div></section>
+<section class="cred-strip"><div class="container cred-strip-inner"><div><span>01</span>{d['strip1']}</div><div><span>02</span>{d['strip2']}</div><div><span>03</span>{d['strip3']}</div></div></section>
+<section class="section expertise-home"><div class="container"><div class="section-heading"><div>{section_tag(d['intro_label'])}<h2>{d['intro_title']}</h2></div><p>{d['intro_body']}</p></div><div class="specialty-grid">{cards}</div></div></section>
+<section class="section profile-feature"><div class="container profile-feature-grid"><div class="profile-visual" data-reveal><img src="{image(l,'dr-amin-speaking.webp')}" width="1280" height="914" loading="lazy" alt="Dr. Amin Elghanam during a medical talk"><div class="profile-photo-tag">NEUROSURGERY<br>AND SPINE SURGERY</div></div><div class="profile-content" data-reveal>{section_tag(d['bio_label'])}<h2>{d['bio_title']}</h2><p>{d['bio_body']}</p><div class="credential-stack">{edu}</div>{btn(d['bio_link'],'about.html','outline')}</div></div></section>
+<section class="care-section"><div class="container care-grid"><div>{section_tag(d['approach_label'])}<h2>{d['approach_title']}</h2><p>{d['approach_body']}</p></div><div class="care-steps"><div><span>01</span><strong>{d['approach1']}</strong></div><div><span>02</span><strong>{d['approach2']}</strong></div><div><span>03</span><strong>{d['approach3']}</strong></div></div></div><div class="care-orbit" aria-hidden="true"></div></section>
+<section class="section media-teaser"><div class="container"><div class="section-heading"><div>{section_tag(d['video_label'])}<h2>{d['video_title']}</h2></div><p>{d['video_body']}</p></div><div class="media-teaser-grid"><a class="media-feature-image" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/watch?v={first_id}" style="--cover:url('{image(l,'dr-amin-brand.webp')}')"><img src="{image(l,'dr-amin-brand.webp')}" width="1280" height="474" loading="lazy" alt="Dr. Amin Elghanam video reference"><span class="play-control">{ICON_PLAY}</span><span class="media-counter">PLAY / 01</span></a><div class="media-teaser-copy"><span class="meta-small">ON YOUTUBE — 01 / 02</span><h3>{d['videos']} 01</h3><p>{d['video_body']}</p>{btn(d['view_media'],'media.html','outline')}</div></div></div></section>{closing(l)}'''
 
-def footer(locale):
- c=COPY[locale];main=''.join(f'<a href="{navlink(locale,f)}">{t}</a>' for f,t in zip(NAVFILES,c['nav']))
- specialties=''.join(f'<a href="{navlink(locale,"specialties.html")}#{s["id"]}">{text(s[locale])}</a>' for s in SERVICES)
- return f'''<footer class="footer"><div class="wrap"><div class="footer-top"><div class="footer-brand"><div class="footer-logo">{BRAND}<span>AMIN ELGHANAM</span></div><p>{c['footer_note']}</p><span class="footer-legal">{c['footer_legal']}</span></div><div class="footer-col"><h3>{c['footer_links']}</h3>{main}</div><div class="footer-col"><h3>{c['footer_areas']}</h3>{specialties}</div></div><div class="footer-bottom"><span>© <span id="year">2026</span> DR. AMIN ELGHANAM. {c['footer_copy']}</span><span>CRAFTED FOR CLARITY / BUILT FOR ACCESSIBILITY</span></div></div></footer><button class="back-top" aria-label="{c['back_top']}" id="back-top">↑</button>
-<div class="video-dialog" id="video-dialog" role="dialog" aria-modal="true" aria-label="{c['lightbox']}" hidden><div class="dialog-panel"><button type="button" class="dialog-close" id="video-close" aria-label="{c['close']}">× <span>{c['close']}</span></button><div class="video-ratio"><iframe id="video-frame" title="YouTube player" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></div></div>'''
+def page_hero(l,kind,portrait=False):
+ d=D[l];t=d['interior_'+kind+'_title'];subtitle=d['interior_'+kind+'_body'];k=d['interior_'+kind+'_label']
+ photo=(f'<div class="page-hero-photo"><img src="{image(l,"dr-amin-whitecoat.webp" if kind!="about" else "dr-amin-speaking.webp")}" alt="Dr. Amin Elghanam" loading="eager"></div>' if portrait else f'<div class="page-hero-decoration"><span>A</span><span>·</span><span>E</span></div>')
+ return f'''<section class="page-hero page-hero--{kind}"><div class="container page-hero-grid"><div><div class="breadcrumb"><a href="index.html">{d['home_label']}</a><span>/</span><strong>{k}</strong></div>{section_tag(k)}<h1>{t}</h1><p>{subtitle}</p></div>{photo}</div></section>'''
 
-def head(locale,page,title,description):
- c=COPY[locale]; prefix='' if locale=='ar' else '../';other='en' if locale=='ar' else 'ar';lang_url=local_link(locale,other,page); selfurl=page
- return f'''<!doctype html><html lang="{locale}" dir="{c['html_dir']}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f8f6f1"><meta name="description" content="{text(description)}"><meta name="robots" content="noindex,nofollow"><meta property="og:type" content="profile"><meta property="og:title" content="{text(title)}"><meta property="og:description" content="{text(description)}"><meta property="og:image" content="{prefix}assets/images/dr-amin-brand.webp"><link rel="alternate" hreflang="{other}" href="{lang_url}"><link rel="alternate" hreflang="{locale}" href="{selfurl}"><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="{prefix}assets/css/styles.css"><title>{text(title)}</title></head><body>{header(locale,page)}<main id="main">'''
+def about(l):
+ d=D[l]
+ ed=''.join(f'''<article class="history-item" data-reveal><div class="history-year">{esc(e[0])}</div><div><h3>{esc(e[1] if l=='ar' else e[2])}</h3><p>{esc(e[3] if l=='ar' else e[4])}</p></div></article>''' for e in ED)
+ fel=''.join(f'''<article class="fellowship" data-reveal><div class="fellowship-year">{esc(e[0])}</div><h3>{esc(e[1] if l=='ar' else e[2])}</h3><p>{esc(e[3] if l=='ar' else e[4])}</p></article>''' for e in FEL)
+ return f'''{page_hero(l,'about',True)}<section class="section about-story"><div class="container about-story-grid"><div class="about-photo" data-reveal><img src="{image(l,'dr-amin-speaking.webp')}" alt="Dr. Amin Elghanam" width="1280" height="914" loading="lazy"><span>DR. AMIN ELGHANAM / NEUROSURGERY</span></div><div class="about-story-copy" data-reveal>{section_tag(d['about_story_label'])}<h2>{d['about_story_title']}</h2><p>{d['about_story_body']}</p><p>{d['about_story_detail']}</p><div class="profile-seals"><span>MD / PhD</span><span>MICROSURGERY</span><span>SPINE</span></div></div></div></section>
+<section class="section education-section"><div class="container education-grid"><div class="sticky-heading">{section_tag('ACADEMIC BACKGROUND')}<h2>{d['education']}</h2><p>{d['years_label']}</p></div><div class="history">{ed}</div></div></section>
+<section class="section fellowships-section"><div class="container">{section_tag('CLINICAL TRAINING')}<h2 class="section-large-heading">{d['clinical']}</h2><div class="fellowship-grid">{fel}</div><p class="source-footnote">{d['study_note']}</p></div></section>{closing(l)}'''
 
-def tail(locale):
- prefix='' if locale=='ar' else '../'
- return f'''</main>{footer(locale)}<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script><script defer src="{prefix}assets/js/site.js"></script></body></html>'''
+def specialties(l):
+ d=D[l]
+ quick=''.join(f'<a href="#{s["id"]}" class="index-pill"><span>{s["num"]}</span>{esc(s[l])}{ICON_ARROW}</a>' for s in SERV)
+ panels=''
+ for i,s in enumerate(SERV):
+  items=''.join(f'<li>{esc(item)}</li>' for item in s['items_'+l])
+  panels+=f'''<section class="specialty-detail" id="{s['id']}"><div class="detail-top"><span class="detail-index">{s['num']} / 04</span><span class="detail-decoration">{'✦' if i==0 else '◌' if i==1 else '⊕' if i==2 else '⌁'}</span></div><h2>{esc(s[l])}</h2><p class="detail-desc">{esc(s['intro_'+l])}</p><div class="detail-content"><div><h3>{d['conditions']}</h3><ul>{items}</ul></div><div class="focus-box"><span>{d['focus']}</span><p>{esc(s['focus_'+l])}</p></div></div></section>'''
+ return f'''{page_hero(l,'spec')}<section class="specialty-page"><div class="container specialty-page-grid"><aside class="specialty-sidebar"><div class="sidebar-sticky"><span class="eyebrow">{d['jump']}</span><nav aria-label="{d['jump']}">{quick}</nav></div></aside><div class="specialty-panels">{panels}<div class="specialty-advisory">{d['spec_notice']}</div></div></div></section>{closing(l)}'''
 
-def service_card(locale,s):
- title=text(s[locale]);intro=text(s['intro_'+locale]);link=navlink(locale,'specialties.html')+'#'+s['id']
- return f'''<a class="area-card" href="{link}" data-reveal><div class="area-head"><span class="area-num">{s['num']} / 04</span><span class="area-icon">{ARROW}</span></div><div class="area-bottom"><h3>{title}</h3><p>{intro}</p><span class="area-link">{COPY[locale]['view_details']} {ARROW}</span></div></a>'''
+def media(l):
+ d=D[l]
+ cards=''
+ for id,num in YOUTUBE:
+  cards+=f'''<a href="https://www.youtube.com/watch?v={id}" target="_blank" rel="noopener noreferrer" class="media-card" data-reveal><div class="media-card-image"><img src="{image(l,'dr-amin-brand.webp' if num=='01' else 'dr-amin-speaking.webp')}" alt="Dr. Amin Elghanam" loading="lazy"><span class="play-control">{ICON_PLAY}</span><span class="media-number">YOUTUBE / {num}</span></div><div class="media-card-text"><span>{d['videos']} {num}</span><strong>{d['watch']} {ICON_ARROW}</strong></div></a>'''
+ soc=''.join(f'''<a class="social-video" href="{esc(url)}" target="_blank" rel="noopener noreferrer"><span>FACEBOOK / {i:02d}</span><strong>{d['social']} {i:02d}</strong>{ICON_ARROW}</a>''' for i,url in enumerate(FACEBOOK,1))
+ return f'''{page_hero(l,'media')}<section class="section media-page"><div class="container">{section_tag('YOUTUBE')}<h2 class="section-large-heading">{d['video_sub']}</h2><div class="media-card-grid">{cards}</div><div class="social-heading">{section_tag('FACEBOOK REELS')}<h2 class="section-large-heading">{d['social_sub']}</h2><p>{d['media_note']}</p></div><div class="social-video-grid">{soc}</div></div></section>{closing(l)}'''
 
-def moving_cta(locale):
- c=COPY[locale];return f'''<section class="closing"><div class="wrap closing-grid"><div>{eyebrow(c['closing_kicker'])}<h2>{c['closing_h']}</h2><p>{c['closing_p']}</p></div>{button(c['closing_btn'],navlink(locale,'contact.html'),'light')}</div></section>'''
-
-def home(locale):
- c=COPY[locale];im='assets/images/' if locale=='ar' else '../assets/images/'
- areas=''.join(service_card(locale,s) for s in SERVICES)
- creds=''.join(f'<li><span>{text(y)}</span><strong>{text(a if locale=="ar" else e)}</strong><small>{text(ar if locale=="ar" else en)}</small></li>' for y,a,e,ar,en in EDUCATION[:3])
- faqs=''.join(f'<details class="faq" data-reveal><summary>{text(q)} <span class="faq-symbol">+</span></summary><div class="faq-answer">{text(a)}</div></details>' for q,a in c['faqs'])
- return f'''<section class="hero"><div class="wrap hero-grid"><div class="hero-text"><div class="hero-overline" data-hero>{eyebrow(c['hero_small'])}</div><h1 data-hero>{c['hero_a']}<br><em>{c['hero_b']}</em></h1><p class="hero-deck" data-hero>{c['hero_desc']}</p><div class="hero-actions" data-hero>{button(c['hero_cta1'],navlink(locale,'specialties.html'))}{button(c['hero_cta2'],navlink(locale,'about.html'),'outline')}</div><div class="hero-note" data-hero><span class="note-dot"></span>{c['hero_meta']}</div></div><div class="hero-art"><div class="hero-art-bg"></div><div class="hero-contour"></div><div id="hero-three" class="hero-three" aria-hidden="true"></div><img class="hero-person" src="{im}dr-amin-cutout.webp" alt="{text(c['name'])}" width="956" height="1280" fetchpriority="high" decoding="async"><div class="hero-micro">DR. AMIN <span>ELGHANAM</span><small>EST. IN PRACTICE / 2010</small></div><div class="hero-stamp"><span>01—04</span><small>NEURO<br>SURGERY</small></div></div></div></section>
-<section class="fact-line"><div class="wrap fact-list"><div><span class="fact-index">01</span><span>{c['label_prof']}</span></div><div><span class="fact-index">02</span><span>{c['label_french']}</span></div><div><span class="fact-index">03</span><span>{c['label_since']}</span></div></div></section>
-<section class="section intro-section"><div class="wrap intro-grid"><div data-reveal>{eyebrow(c['intro_kicker'])}<h2 class="section-title">{c['intro_h']}</h2></div><p class="large-copy" data-reveal>{c['intro_p']}</p></div></section>
-<section class="section areas-section" id="areas"><div class="wrap"><div class="section-heading" data-reveal><div>{eyebrow(c['areas_kicker'])}<h2 class="section-title">{c['areas_h']}</h2></div><div class="heading-side"><p>{c['areas_p']}</p><a class="text-link" href="{navlink(locale,'specialties.html')}">{c['browse_all']} {ARROW}</a></div></div><div class="areas-grid">{areas}</div></div></section>
-<section class="section story-section"><div class="wrap story-grid"><div class="story-image" data-reveal><img src="{im}dr-amin-whitecoat.webp" loading="lazy" alt="{c['name']}" width="493" height="493"><span class="story-image-caption">THE DOCTOR / THE JOURNEY</span></div><div class="story-content" data-reveal>{eyebrow(c['story_kicker'])}<h2 class="section-title">{c['story_h']}</h2><p>{c['story_p']}</p>{button(c['story_link'],navlink(locale,'about.html'),'outline')}<div class="story-credentials"><h3>{c['highlights']}</h3><ul>{creds}</ul><small>{c['credential_note']}</small></div></div></div></section>
-<section class="approach-section"><div class="wrap approach-grid"><div>{eyebrow(c['approach_kicker'])}<h2>{c['approach_h']}</h2><p>{c['approach_p']}</p></div><div class="approach-steps">{''.join(f'<div class="approach-step" data-reveal><span>0{i}</span><h3>{text(t)}</h3></div>' for i,t in enumerate(c['steps'],1))}</div></div></section>
-<section class="section media-home"><div class="wrap"><div class="section-heading" data-reveal><div>{eyebrow(c['watch_kicker'])}<h2 class="section-title">{c['watch_h']}</h2></div><div class="heading-side"><p>{c['watch_p']}</p><a class="text-link" href="{navlink(locale,'media.html')}">{c['watch_button']} {ARROW}</a></div></div><div class="featured-media"><button class="featured-image" type="button" data-video="{VIDS[0]}" aria-label="{c['open_video']}"><img src="{im}dr-amin-speaking.webp" loading="lazy" alt="{c['name']}" width="1280" height="914"><span class="play-bubble">{PLAY}</span></button><div class="featured-content"><span class="media-count">01 / YOUTUBE ARCHIVE</span><h3>{c['youtube']}</h3><p>{c['watch_p']}</p><button class="inline-play" type="button" data-video="{VIDS[0]}">{c['open_video']} {ARROW}</button></div></div></div></section>
-<section class="section faq-section"><div class="wrap faq-grid"><div data-reveal>{eyebrow(c['faqs_kicker'])}<h2 class="section-title">{c['faqs_h']}</h2></div><div>{faqs}</div></div></section>{moving_cta(locale)}'''
-
-def page_hero(locale,kind):
- c=COPY[locale];return f'''<section class="interior-hero"><div class="wrap interior-grid"><div>{eyebrow(c[kind+'_eyebrow'])}<h1>{c[kind+'_title']}</h1><p>{c[kind+'_lede']}</p></div><div class="interior-aside"><div class="interior-mark">A<span>·</span>E</div><span>{'MEDICAL PORTFOLIO / 2026' if locale=='en' else 'الملف الطبي والتعريفي'}</span></div></div></section>'''
-
-def about(locale):
- c=COPY[locale]; im='assets/images/' if locale=='ar' else '../assets/images/'
- def entries(items):
-  return ''.join(f'<li class="timeline-entry" data-reveal><span class="timeline-year">{yr}</span><div><h3>{text(ar if locale=="ar" else en)}</h3><p>{text(a if locale=="ar" else e)}</p></div></li>' for yr,ar,en,a,e in items)
- vals=''.join(f'<li>{text(v)}</li>' for v in c['values'])
- return f'''{page_hero(locale,'about')}<section class="section about-main"><div class="wrap about-main-grid"><div class="portrait-card" data-reveal><img src="{im}dr-amin-speaking.webp" alt="{c['name']}" width="1280" height="914" loading="lazy"><span>DR. AMIN ELGHANAM — NEUROSURGERY</span></div><div class="about-body" data-reveal>{eyebrow(c['bio_kicker'])}<h2 class="section-title">{c['bio_h']}</h2><p>{c['bio_p1']}</p><p>{c['bio_p2']}</p><div class="about-signet"><span>MD / PhD</span><span>MICROSURGERY</span><span>SPINE</span></div></div></div></section><section class="section timeline-section"><div class="wrap"><div class="timeline-heading">{eyebrow(c['career_kicker'])}<h2 class="section-title">{c['career_h']}</h2></div><ol class="timeline">{entries(EDUCATION)}</ol></div></section><section class="section timeline-section alt"><div class="wrap"><div class="timeline-heading">{eyebrow(c['fellow_kicker'])}<h2 class="section-title">{c['fellow_h']}</h2></div><ol class="timeline">{entries(FELLOWSHIPS)}</ol><p class="source-note">{c['career_note']}</p></div></section><section class="section values-section"><div class="wrap values-grid"><div>{eyebrow(c['values_kicker'])}<h2 class="section-title">{c['values_h']}</h2></div><ul>{vals}</ul></div></section>{moving_cta(locale)}'''
-
-def specialty(locale):
- c=COPY[locale]
- links=''.join(f'<a href="#{s["id"]}"><span>{s["num"]}</span>{text(s[locale])}</a>' for s in SERVICES)
- blocks=''.join(f'''<article class="spec-block" id="{s['id']}" data-reveal><div class="spec-block-head"><span class="spec-num">{s['num']} <small>/ 04</small></span><h2>{text(s[locale])}</h2><p>{text(s['intro_'+locale])}</p></div><div class="spec-block-body"><div><h3>{c['spec_under']}</h3><ul class="spec-list">{''.join(f'<li>{text(item)}</li>' for item in s['items_'+locale])}</ul></div><div class="tech-panel"><span>{c['spec_focus']}</span><p>{text(s['focus_'+locale])}</p></div></div></article>''' for s in SERVICES)
- return f'''{page_hero(locale,'spec')}<section class="section spec-section"><div class="wrap spec-layout"><aside class="spec-nav"><h2>{c['spec_jump']}</h2>{links}</aside><div class="spec-content">{blocks}<div class="spec-note">{c['spec_note']}</div></div></div></section><section class="closing"><div class="wrap closing-grid"><div>{eyebrow(c['spec_cta'])}<h2>{c['spec_cta']}</h2><p>{c['spec_cta_p']}</p></div>{button(c['closing_btn'],navlink(locale,'contact.html'),'light')}</div></section>'''
-
-def media(locale):
- c=COPY[locale];im='assets/images/' if locale=='ar' else '../assets/images/'
- yt=''.join(f'''<article class="media-card" data-reveal><button class="media-cover" type="button" data-video="{id}" aria-label="{c['open_video']}"><img src="{im}{'dr-amin-speaking.webp' if i==0 else 'dr-amin-brand.webp'}" alt="{c['name']}" loading="lazy" width="1280" height="914"><span class="play-bubble">{PLAY}</span></button><div class="media-info"><span>YOUTUBE / {i+1:02d}</span><h3>{c['youtube']} {i+1:02d}</h3><button type="button" data-video="{id}">{c['watch']} {ARROW}</button></div></article>''' for i,id in enumerate(VIDS))
- fb=''.join(f'''<a class="social-card" href="{url}" target="_blank" rel="noopener noreferrer" data-reveal><span>FACEBOOK / {i+1:02d}</span><strong>{c['facebook']} {i+1:02d}</strong><span class="social-arrow">↗</span></a>''' for i,url in enumerate(FB))
- return f'''{page_hero(locale,'media')}<section class="section media-library"><div class="wrap">{eyebrow(c['youtube_cat'])}<div class="media-tiles">{yt}</div><div class="media-subheading">{eyebrow(c['facebook_cat'])}</div><div class="social-grid">{fb}</div><p class="source-note">{c['media_note']}</p></div></section>{moving_cta(locale)}'''
-
-def contact(locale):
- c=COPY[locale]
- return f'''{page_hero(locale,'contact')}<section class="section contact-section"><div class="wrap"><div class="contact-panels"><article class="contact-primary" data-reveal>{eyebrow(c['contact_card1'])}<h2>{c['contact_card1']}</h2><p>{c['contact_card1_p']}</p><a href="mailto:{CLINIC_EMAIL}" class="contact-email">{CLINIC_EMAIL} {ARROW}</a><div class="contact-actions">{button(c['contact_cta'],'mailto:'+CLINIC_EMAIL,'light')}<button class="btn btn-contact-outline" id="copy-email" type="button" data-copy="{CLINIC_EMAIL}" data-copied="{c['copied']}">{c['copy_email']}</button></div></article><article class="contact-secondary" data-reveal><span class="contact-index">01 / LOCATION</span><h2>{c['contact_card2']}</h2><p>{c['contact_card2_p']}</p><span class="status-dot">{c['pending']}</span></article><article class="contact-secondary" data-reveal><span class="contact-index">02 / BOOKING</span><h2>{c['contact_card3']}</h2><p>{c['contact_card3_p']}</p><span class="status-dot">{c['pending']}</span></article></div><div class="contact-disclaimer">{c['contact_note']}</div></div></section>'''
+def contact(l):
+ d=D[l]
+ return f'''{page_hero(l,'contact')}<section class="section contact-page"><div class="container contact-grid"><div class="contact-main" data-reveal><span class="contact-counter">01 / EMAIL</span>{section_tag(d['email_label'])}<h2>{d['email_label']}</h2><p>{d['email_body']}</p><a class="contact-email-link" href="mailto:amin.elghanam@gmail.com">amin.elghanam@gmail.com {ICON_ARROW}</a>{btn(d['send_email'],'mailto:amin.elghanam@gmail.com','light')}<p class="contact-privacy">{d['privacy']}</p></div><div class="contact-side"><div class="contact-info" data-reveal><span class="contact-counter">02 / LOCATIONS</span><h3>{d['location_label']}</h3><p>{d['location_body']}</p><span class="pending">◌ {d['pending']}</span></div><div class="contact-info" data-reveal><span class="contact-counter">03 / BOOKING</span><h3>{d['booking_label']}</h3><p>{d['booking_body']}</p><span class="pending">◌ {d['pending']}</span></div></div></div><div class="container"><div class="emergency-note"><span>!</span><p>{d['emergency']}</p></div></div></section>'''
 
 def build():
- for locale in ['ar','en']:
-  outdir=ROOT if locale=='ar' else ROOT/'en';outdir.mkdir(exist_ok=True)
-  c=COPY[locale]
-  pages={'index.html':(home(locale),c['home_title'],c['home_desc']),
-         'about.html':(about(locale),c['about']+' | '+c['name'],c['about_lede']),
-         'specialties.html':(specialty(locale),c['specialties']+' | '+c['name'],c['spec_lede']),
-         'media.html':(media(locale),c['media']+' | '+c['name'],c['media_lede']),
-         'contact.html':(contact(locale),c['contact']+' | '+c['name'],c['contact_lede'])}
-  for file,(body,title,desc) in pages.items():
-   content=head(locale,file,title,desc)+body+tail(locale)
-   (outdir/file).write_text(content,encoding='utf-8')
-   print(locale,file,len(content))
- (ROOT/'content'/'source-categories.json').parent.mkdir(parents=True,exist_ok=True)
- (ROOT/'content'/'source-categories.json').write_text(json.dumps({'source':'Almana Marketing Profile, pages 2 and 4','specialties':SERVICES,'academic_degrees':EDUCATION,'clinical_fellowships':FELLOWSHIPS},ensure_ascii=False,indent=2),encoding='utf-8')
-
+ for l in ('ar','en'):
+  out=ROOT if l=='ar' else ROOT/'en'
+  out.mkdir(exist_ok=True)
+  for f,gen,title,desc in [
+   ('index.html',home,D[l]['home_label'],D[l]['hero_body']),
+   ('about.html',about,D[l]['about_label'],D[l]['interior_about_body']),
+   ('specialties.html',specialties,D[l]['specialties_label'],D[l]['interior_spec_body']),
+   ('media.html',media,D[l]['media_label'],D[l]['interior_media_body']),
+   ('contact.html',contact,D[l]['contact_label'],D[l]['interior_contact_body'])]:
+   (out/f).write_text(document(l,f,title,desc,gen(l)),encoding='utf-8')
+ print('Rendered 10 responsive HTML pages')
 if __name__=='__main__':build()
