@@ -1,4 +1,4 @@
-# Dr. Amin Elghanam — Portfolio Website V3
+# Dr. Amin Elghanam — Portfolio Website V4
 
 A redesigned bilingual (Arabic RTL / English LTR) medical personal portfolio. Built with hand-authored HTML, CSS and JavaScript for **GitHub Pages preview** and a potential later WordPress conversion.
 
@@ -32,7 +32,7 @@ Then open `http://localhost:8000/`.
 
 ```bash
 git add .
-git commit -m "Redesign Dr Amin website V3 — responsive bilingual pages"
+git commit -m "Redesign Dr Amin website V4 — responsive bilingual pages"
 git push origin main
 ```
 

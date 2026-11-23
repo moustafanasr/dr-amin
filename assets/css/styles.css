@@ -43,3 +43,190 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}img,svg{
 /* RTL media player is centered using the direction-aware translation. */
 html[dir=rtl] .play-control{transform:translate(50%,-50%)}
 @media(max-width:390px){.header-inner{gap:8px}.identity-name{font-size:9px;letter-spacing:0}.identity-name small{display:none}.identity-mark{width:35px;height:35px}.header-tools{gap:2px}.menu-toggle{padding:6px}.lang-switch{font-size:10px}}
+
+/* ──────────────────────────────────────────────────────────────
+   V4 refinement: compact rhythm, custom monogram, balanced CTA,
+   specialist content, and chronological career milestones.
+   ────────────────────────────────────────────────────────────── */
+:root { --section-space: 72px; }
+.section{padding-block:var(--section-space)}
+.section-heading{margin-bottom:32px;gap:34px}
+.section-heading h2,.profile-content h2,.care-grid h2{margin-top:12px}
+.section-heading>p{max-width:360px}
+.site-header{height:78px}
+.site-header.scrolled{height:68px}
+.notice-bar{height:26px}
+.header-inner{gap:25px}
+.identity{gap:12px;min-width:250px;max-width:340px}
+.identity-mark{height:51px;width:51px;display:block;flex:0 0 51px;border:0;overflow:hidden;background:transparent}
+.identity-mark::before{display:none}
+.identity-mark img{height:100%;width:100%;display:block;object-fit:contain}
+.identity-name{font-size:13px;line-height:1.3;letter-spacing:.045em}
+.identity-name small{font-size:9px;line-height:1.5;letter-spacing:0;margin-top:3px}
+html[lang=ar] .identity-name small{font-size:10px;line-height:1.45}
+.nav-links{gap:19px}
+.home-hero-grid{min-height:565px}
+.hero-copy{padding-block:49px 38px}
+.hero-copy h1{margin-top:19px}
+.hero-copy>p{margin-bottom:24px}
+.hero-photo{min-height:510px}
+.hero-foot{margin-top:29px}
+.cred-strip-inner>div{min-height:78px;padding-block:15px;gap:16px}
+.strip-symbol{font:500 20px/1 var(--serif)!important;letter-spacing:0!important;opacity:.95}
+.specialty-card{min-height:330px;padding:24px}
+.card-type{font:700 10px/1.3 var(--sans);letter-spacing:.05em;opacity:.7}
+.specialty-icon{margin-bottom:18px}
+.profile-feature-grid{gap:58px}
+.profile-visual{height:490px}
+.profile-content p{margin-bottom:16px}
+.small-credential{gap:16px}
+.small-credential .credential-symbol{font:500 20px/1 var(--serif);color:var(--golddeep);min-width:25px}
+.care-section{padding:74px 0}
+.care-grid{gap:80px}
+.media-teaser-grid{min-height:340px}
+.media-feature-image,.media-feature-image img{min-height:340px}
+.media-teaser-copy{padding:38px}
+.end-cta{padding:69px 0}
+.end-cta:after{inset-inline-end:-120px;top:-380px;opacity:.52}
+.end-cta-inner{flex-direction:column;align-items:center;justify-content:center;gap:25px;text-align:center}
+.end-cta-inner>div{width:min(100%,820px);display:flex;flex-direction:column;align-items:center}
+.end-cta .eyebrow{justify-content:center}
+.end-cta h2{max-width:780px;font-size:clamp(34px,3.8vw,56px);line-height:1.45;margin:13px auto}
+.end-cta p{margin-inline:auto;max-width:610px;text-align:center}
+.end-cta .btn{min-width:190px}
+.page-hero-grid{min-height:325px;gap:32px}
+.page-hero-grid>div:first-child{padding-block:43px 49px}
+.page-hero h1{margin:15px 0}
+.page-hero-decoration img{width:190px;height:190px;opacity:.19;filter:saturate(.5);transform:rotate(-8deg)}
+.page-hero-photo{min-height:325px}
+.about-story-grid{gap:55px}
+.about-photo{height:445px}
+.about-story-copy h2{margin:12px 0}
+.education-grid{gap:55px;grid-template-columns:minmax(0,.7fr) minmax(0,1fr)}
+.sticky-heading{top:111px}
+.history{border-top:0;display:grid;gap:11px}
+.history-item{background:rgba(255,255,255,.72);border:1px solid #dfd9d0;border-inline-start:3px solid var(--gold);grid-template-columns:94px minmax(0,1fr);gap:21px;padding:20px 22px;align-items:center}
+.history-year{font:700 16px/1.5 var(--sans);display:inline-block;direction:ltr;white-space:nowrap;color:var(--golddeep)}
+.history-item h3{font-size:16px;margin:0 0 3px}
+.history-item p{font-size:12px}
+.fellowship-grid{gap:15px;margin-top:25px}
+.fellowship{min-height:230px;padding:25px;border-top:0;border-inline-start:3px solid var(--gold);background:#f6f3ef}
+.fellowship-year{font:700 14px var(--sans);direction:ltr;align-self:flex-start}
+.fellowship h3{margin-top:22px}
+.specialty-page{padding:67px 0 72px}
+.specialty-page-grid{grid-template-columns:265px minmax(0,1fr);gap:35px}
+.sidebar-sticky{top:100px}
+.sidebar-sticky .eyebrow{margin-bottom:15px}
+.index-pill{padding:16px 6px;font-size:12px;gap:14px}
+.index-symbol{font:500 17px/1 var(--serif)!important;color:var(--golddeep)}
+.specialty-detail{min-height:0;padding:28px 34px 32px;margin-bottom:12px;border:1px solid #e5e2dc;border-top:3px solid #c49d84;box-shadow:0 12px 28px #10283a06}
+.specialty-detail:nth-child(even){background:#f6f3ef}
+.detail-top{min-height:25px}
+.detail-index{font:700 11px var(--arabic);letter-spacing:0;text-transform:uppercase}
+.detail-decoration{font-size:33px}
+.specialty-detail h2{margin:5px 0 7px;font-size:clamp(24px,2.6vw,36px)}
+.detail-desc{margin-bottom:19px}
+.detail-content{gap:17px;grid-template-columns:minmax(0,1fr) minmax(0,.77fr)}
+.detail-content li{padding-block:9px;font-size:13px}
+.focus-box{background:linear-gradient(140deg,#e8ddd0,#efe6db);border-inline-start:3px solid #b98b70;min-height:0;padding:21px 23px;align-self:stretch}
+.focus-box>span{display:block;margin-bottom:9px}
+.focus-box p{margin:0;line-height:1.85}
+.media-page .section-large-heading{margin-block:12px 25px}
+.media-card-image{height:300px}
+.social-heading{margin-top:58px}
+.social-video{min-height:142px}
+.contact-main{min-height:440px;padding:43px 42px}
+.contact-main .eyebrow{margin-top:0}
+.contact-info{padding:29px 34px}
+.footer{padding:55px 0 26px}
+.footer-top{gap:47px;padding-bottom:36px}
+.footer-intro p{margin-top:15px}
+.footer-wordmark{display:flex;align-items:center;gap:13px;font-size:25px}
+.footer-wordmark img{height:46px;width:46px;flex:none}
+.footer-wordmark>.footer-name{color:#fff}
+.footer-wordmark b{font-weight:800;color:#d6a98e}
+.footer-bottom{padding-top:21px}
+@media(max-width:1180px){
+ .identity{min-width:210px;max-width:250px}.nav-links{gap:13px}
+ .home-hero-grid{min-height:535px}.hero-photo{min-height:470px}
+ .profile-feature-grid{gap:36px}.care-grid{gap:43px}
+ .specialty-page-grid{grid-template-columns:230px minmax(0,1fr);gap:26px}
+}
+@media(max-width:980px){
+ .site-header{height:72px}.site-header.scrolled{height:68px}
+ .identity-mark{width:45px;height:45px;flex-basis:45px}
+ .home-hero-grid{min-height:0}.hero-photo{min-height:430px}
+ .profile-visual{height:420px}
+ .specialty-page-grid{grid-template-columns:1fr;gap:18px}
+ .sidebar-sticky{position:static}
+ .sidebar-sticky nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px}
+}
+@media(max-width:720px){
+ :root{--section-space:48px}
+ .site-header{height:68px}.site-header.scrolled{height:64px}
+ .identity{gap:8px;min-width:0;flex-shrink:1}
+ .identity-mark{width:40px;height:40px;flex-basis:40px}
+ .identity-name{font-size:11px}.identity-name small,html[lang=ar] .identity-name small{font-size:8px}
+ .home-hero-grid{min-height:0}.hero-copy{padding:37px 0 20px}
+ .hero-copy h1{margin-top:18px}
+ .hero-foot{margin-top:20px}
+ .hero-photo{min-height:0;height:min(103vw,475px)}
+ .cred-strip-inner>div{min-height:0;padding:12px 0}
+ .section-heading{margin-bottom:24px}
+ .section-heading>p{margin-top:10px}
+ .specialty-card{min-height:208px;padding:21px}
+ .profile-visual{height:365px}
+ .profile-feature-grid,.care-grid,.about-story-grid,.education-grid,.contact-grid{gap:25px}
+ .care-section{padding:49px 0}
+ .media-feature-image,.media-feature-image img{height:240px;min-height:240px}
+ .media-teaser-copy{padding:24px}
+ .end-cta{padding:51px 0}
+ .end-cta-inner{align-items:center;gap:20px}
+ .end-cta h2{font-size:clamp(29px,7.7vw,42px)}
+ .end-cta .btn{width:min(100%,290px)}
+ .page-hero-grid{min-height:0}
+ .page-hero-grid>div:first-child{padding:35px 0 38px}
+ .page-hero h1{font-size:clamp(32px,8vw,48px)}
+ .about-photo{height:330px}
+ .history{gap:8px}
+ .history-item{grid-template-columns:74px minmax(0,1fr);gap:9px;padding:17px 13px}
+ .history-year{font-size:13px}
+ .history-item h3{font-size:14px}
+ .fellowship{min-height:190px}
+ .specialty-page{padding:42px 0 50px}
+ .sidebar-sticky nav{grid-template-columns:1fr}
+ .index-pill{padding:11px 6px}
+ .specialty-detail{padding:21px 19px 24px}
+ .detail-content{grid-template-columns:1fr;gap:15px}
+ .specialty-detail h2{font-size:24px}
+ .focus-box{padding:17px}
+ .media-card-image{height:240px}
+ .social-heading{margin-top:42px}
+ .social-video{min-height:120px}
+ .contact-main{min-height:0;padding:28px 24px}
+ .contact-info{padding:24px}
+ .footer{padding:43px 0 22px}
+ .footer-top{gap:26px}
+ .footer-wordmark{font-size:21px}
+ .footer-wordmark img{width:40px;height:40px}
+}
+@media(max-width:390px){
+ .identity-mark{width:35px;height:35px;flex-basis:35px}
+ .identity-name{font-size:9px}
+ .identity-name small{display:none}
+}
+/* Keep biography content inside narrow phones (including 320px viewports). */
+.about-story-grid>*{min-width:0;max-width:100%}
+.about-photo{overflow:hidden}
+@media(max-width:720px){
+ .about-story-grid{grid-template-columns:minmax(0,1fr)}
+ .about-story-copy,.about-photo{min-width:0;width:100%;max-width:100%}
+ .about-story-copy p{overflow-wrap:break-word}
+}
+@media(max-width:720px){
+ .education-grid{grid-template-columns:minmax(0,1fr)}
+ .education-grid>*{min-width:0}
+ .history-item{grid-template-columns:70px minmax(0,1fr)}
+ .history-item>div:last-child{min-width:0}
+ .history-item h3,.history-item p{overflow-wrap:anywhere}
+}
